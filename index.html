@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fullstop JSON Studio & Validator | Fullstop Solution Offline Edition</title>
+  <meta name="description" content="High-performance JSON formatter, structural validator, minifier, and two-way JSON/CSV data converter.">
+  <link rel="icon" type="image/png" href="https://www.fullstopsolution.in/assets/images/logo.png">
+  <style>
+
+:root {
+  --bg-primary: #030712;
+  --bg-secondary: #080e1e;
+  --bg-card: rgba(15, 23, 42, 0.75);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-cyan: #22d3ee;
+  --accent-blue: #38bdf8;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.5rem;
+}
+[data-theme="light"] .navbar { background: rgba(255, 255, 255, 0.9); }
+
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.brand-dot { color: var(--accent-cyan); }
+.nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+.container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  flex: 1;
+}
+
+.hero { text-align: center; margin-bottom: 2rem; }
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: var(--accent-cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.hero-title {
+  font-size: clamp(1.85rem, 4vw, 2.65rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.hero-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 680px;
+  margin: 0 auto 1.5rem;
+}
+
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2rem;
+}
+[data-theme="light"] .tool-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.form-group { margin-bottom: 1.25rem; }
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-textarea,
+[data-theme="light"] .form-select {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.btn-primary { background: #0284c7; color: #ffffff; }
+.btn-primary:hover { background: #0369a1; transform: translateY(-1px); }
+.btn-gradient { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: #ffffff; }
+.btn-gradient:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+.btn-outline:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--accent-cyan); }
+.btn-sm { padding: 0.4rem 0.85rem; font-size: 0.8rem; }
+.btn-xs { padding: 0.25rem 0.6rem; font-size: 0.75rem; border-radius: 6px; }
+.btn-icon { padding: 0.45rem; border-radius: 8px; background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; }
+
+.desktop-banner {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.92) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+[data-theme="light"] .desktop-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.code-output {
+  background: #020617;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+  max-height: 250px;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.footer {
+  border-top: 1px solid var(--border-color);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: rgba(3, 7, 18, 0.95);
+}
+[data-theme="light"] .footer { background: #f8fafc; }
+.footer-links { display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.footer-links a { color: var(--text-secondary); text-decoration: none; }
+.footer-links a:hover { color: var(--accent-cyan); }
+
+@media (max-width: 768px) {
+  .tool-split { grid-template-columns: 1fr !important; }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="https://www.fullstopsolution.in" class="brand">
+        <img src="https://www.fullstopsolution.in/assets/images/logo.png" alt="Logo" width="32" height="32" style="border-radius:6px;">
+        <span>FULLSTOP SOLUTION<span class="brand-dot">.</span></span>
+      </a>
+      <div class="nav-actions">
+        <button id="theme-btn" class="btn-icon" onclick="toggleTheme()" aria-label="Toggle Theme">☀️</button>
+        <a href="https://www.fullstopsolution.in/#tools" class="btn btn-outline btn-sm">Fullstop Tools ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <div class="hero-badge">⚡ Developer Data Tools • 100% In-Browser Privacy</div>
+      <h1 class="hero-title">Fullstop JSON Studio & Validator</h1>
+      <p class="hero-desc">High-performance JSON formatter, structural validator, minifier, and two-way JSON/CSV data converter.</p>
+    </div>
+
+    <!-- Standalone Tool Body -->
+    <div class="tool-card">
+
+        <!-- Presets and File Upload Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">SAMPLES:</span>
+            <button class="btn btn-xs btn-outline" onclick="loadJsonPreset('api')">API Response</button>
+            <button class="btn btn-xs btn-outline" onclick="loadJsonPreset('ecommerce')">E-Commerce</button>
+            <button class="btn btn-xs btn-outline" onclick="loadJsonPreset('users')">Users List</button>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="file" id="json-file-input" style="display:none;" accept=".json,.csv,.txt" onchange="handleJsonUpload(event)">
+            <button class="btn btn-xs btn-outline" onclick="document.getElementById('json-file-input').click()">📁 Open File</button>
+            <button class="btn btn-xs btn-primary" onclick="downloadJsonFile()">💾 Download</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <textarea id="json-input" class="form-textarea" style="min-height:220px; font-family:var(--font-mono); font-size:0.85rem;" placeholder="Paste or upload your raw JSON / CSV here..." oninput="validateJsonRealtime()"></textarea>
+        </div>
+
+        <!-- Action Toolbar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="formatJson(2)">Beautify (2 Spaces)</button>
+            <button class="btn btn-outline btn-sm" onclick="formatJson(4)">Beautify (4 Spaces)</button>
+            <button class="btn btn-outline btn-sm" onclick="minifyJson()">Minify</button>
+            <button class="btn btn-gradient btn-sm" onclick="jsonToCsv()">JSON ➔ CSV</button>
+            <button class="btn btn-gradient btn-sm" onclick="csvToJson()">CSV ➔ JSON</button>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline btn-sm" onclick="copyJson()">Copy Output</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('json-input').value = ''; validateJsonRealtime();">Clear</button>
+          </div>
+        </div>
+
+        <div id="json-status" style="padding:0.75rem 1rem; border-radius:8px; background:rgba(34,211,238,0.1); border:1px solid rgba(34,211,238,0.25); font-size:0.85rem; color:var(--accent-cyan); font-family:var(--font-mono);">
+          Ready for input. Paste your payload above.
+        </div>
+
+    </div>
+
+    <!-- Cross-Platform Desktop Distribution Banner -->
+    <div class="desktop-banner">
+      <div>
+        <h4 style="font-size:1.05rem; font-weight:700; color:var(--text-primary); margin-bottom:0.25rem;">
+          🖥️ Prefer Native Desktop Software?
+        </h4>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+          Download Fullstop Suite for macOS (Apple Silicon & Intel), Windows, and Linux with verified SHA-256 signatures.
+        </p>
+      </div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="https://www.fullstopsolution.in/downloads/mac/fullstop-desktop-macos-arm64.zip" class="btn btn-primary btn-sm">⬇️ Mac Silicon</a>
+        <a href="https://www.fullstopsolution.in/downloads/windows/fullstop-desktop-windows-x64.zip" class="btn btn-outline btn-sm">⬇️ Windows x64</a>
+        <a href="https://www.fullstopsolution.in/#desktop" class="btn btn-gradient btn-sm">All Downloads →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="https://www.fullstopsolution.in">Fullstop Home</a>
+      <a href="https://www.fullstopsolution.in/#tools">All 11+ Tools</a>
+      <a href="https://www.fullstopsolution.in/macsentinel.html">MacSentinel macOS App</a>
+      <a href="https://www.fullstopsolution.in/security.html">Security Architecture</a>
+      <a href="https://www.fullstopsolution.in/privacy-policy.html">Privacy Policy</a>
+    </div>
+    <p>© 2026 Fullstop Solution (www.fullstopsolution.in). Zero-Knowledge Client-Side Tool. Released under MIT License.</p>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+
+    const App = {
+      escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag));
+      },
+      showToast(msg) {
+        let toast = document.getElementById('fs-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'fs-toast';
+          toast.style.position = 'fixed';
+          toast.style.bottom = '24px';
+          toast.style.right = '24px';
+          toast.style.background = '#0284c7';
+          toast.style.color = '#ffffff';
+          toast.style.padding = '12px 20px';
+          toast.style.borderRadius = '8px';
+          toast.style.fontSize = '0.9rem';
+          toast.style.fontWeight = '600';
+          toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+          toast.style.zIndex = '9999';
+          toast.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+        clearTimeout(window._toastTimeout);
+        window._toastTimeout = setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(8px)';
+        }, 3200);
+      }
+    };
+
+
+function validateJsonRealtime() {
+  const input = document.getElementById('json-input')?.value.trim();
+  const status = document.getElementById('json-status');
+  if (!status) return;
+
+  if (!input) {
+    status.style.background = 'rgba(255,255,255,0.05)';
+    status.style.borderColor = 'var(--border-color)';
+    status.style.color = 'var(--text-muted)';
+    status.textContent = 'Ready for input. Paste your payload above.';
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(input);
+    const isArr = Array.isArray(parsed);
+    const count = isArr ? parsed.length : Object.keys(parsed).length;
+    status.style.background = 'rgba(16,185,129,0.12)';
+    status.style.borderColor = 'rgba(16,185,129,0.35)';
+    status.style.color = 'var(--accent-emerald)';
+    status.textContent = `✓ Valid JSON! Type: ${isArr ? 'Array' : 'Object'} (${count} ${isArr ? 'items' : 'keys'}).`;
+  } catch (e) {
+    status.style.background = 'rgba(239,68,68,0.12)';
+    status.style.borderColor = 'rgba(239,68,68,0.35)';
+    status.style.color = '#ef4444';
+    status.textContent = `✕ Syntax Error: ${e.message}`;
+  }
+}
+
+function formatJson(spaces = 2) {
+  const textarea = document.getElementById('json-input');
+  if (!textarea || !textarea.value.trim()) return;
+  try {
+    const obj = JSON.parse(textarea.value);
+    textarea.value = JSON.stringify(obj, null, spaces);
+    validateJsonRealtime();
+    App.showToast(`Beautified with ${spaces} space indentation!`);
+  } catch (e) {
+    App.showToast('Invalid JSON: ' + e.message);
+  }
+}
+
+function minifyJson() {
+  const textarea = document.getElementById('json-input');
+  if (!textarea || !textarea.value.trim()) return;
+  try {
+    const obj = JSON.parse(textarea.value);
+    textarea.value = JSON.stringify(obj);
+    validateJsonRealtime();
+    App.showToast('JSON Minified!');
+  } catch (e) {
+    App.showToast('Invalid JSON: ' + e.message);
+  }
+}
+
+function jsonToCsv() {
+  const textarea = document.getElementById('json-input');
+  if (!textarea || !textarea.value.trim()) return;
+  try {
+    let data = JSON.parse(textarea.value);
+    if (!Array.isArray(data)) data = [data];
+    if (data.length === 0) {
+      App.showToast('Empty JSON array.');
+      return;
+    }
+    const headers = Object.keys(data[0]);
+    const csvRows = [headers.join(',')];
+    for (const row of data) {
+      const values = headers.map(header => {
+        const val = row[header] ?? '';
+        const escaped = ('' + val).replace(/"/g, '""');
+        return `"${escaped}"`;
+      });
+      csvRows.push(values.join(','));
+    }
+    textarea.value = csvRows.join('\n');
+    validateJsonRealtime();
+    App.showToast('Converted JSON to CSV!');
+  } catch (e) {
+    App.showToast('Error converting to CSV: ' + e.message);
+  }
+}
+
+function csvToJson() {
+  const textarea = document.getElementById('json-input');
+  if (!textarea || !textarea.value.trim()) return;
+  try {
+    const lines = textarea.value.trim().split('\n');
+    if (lines.length < 2) {
+      App.showToast('CSV requires at least a header row and 1 data row.');
+      return;
+    }
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const currentline = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      const obj = {};
+      for (let j = 0; j < headers.length; j++) {
+        obj[headers[j]] = currentline[j] ?? '';
+      }
+      result.push(obj);
+    }
+    textarea.value = JSON.stringify(result, null, 2);
+    validateJsonRealtime();
+    App.showToast(`Converted ${result.length} CSV rows to JSON!`);
+  } catch (e) {
+    App.showToast('Error converting CSV to JSON: ' + e.message);
+  }
+}
+
+function handleJsonUpload(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const textarea = document.getElementById('json-input');
+    if (textarea) {
+      textarea.value = event.target.result;
+      validateJsonRealtime();
+      App.showToast(`Loaded ${file.name} successfully!`);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function downloadJsonFile() {
+  const content = document.getElementById('json-input')?.value;
+  if (!content) return;
+  const isCsv = !content.trim().startsWith('{') && !content.trim().startsWith('[');
+  const filename = isCsv ? 'data.csv' : 'data.json';
+  const type = isCsv ? 'text/csv' : 'application/json';
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  App.showToast(`Downloaded ${filename}!`);
+}
+
+function loadJsonPreset(type) {
+  const textarea = document.getElementById('json-input');
+  if (!textarea) return;
+  if (type === 'api') {
+    textarea.value = JSON.stringify({
+      status: "success",
+      code: 200,
+      timestamp: new Date().toISOString(),
+      data: {
+        app: "Fullstop Solution",
+        version: "2.6.0",
+        platform: "Desktop & Web Suite",
+        zeroKnowledge: true,
+        capabilities: ["SEO", "Security", "Finance", "Developer Utilities"]
+      }
+    }, null, 2);
+  } else if (type === 'ecommerce') {
+    textarea.value = JSON.stringify({
+      orderId: "FS-9281-2026",
+      currency: "INR",
+      total: 1499,
+      items: [
+        { sku: "FS-OS-NOTION", name: "Ultimate Business OS", qty: 1, price: 1499 }
+      ],
+      customer: { name: "Aditya Sharma", status: "Verified VIP" }
+    }, null, 2);
+  } else if (type === 'users') {
+    textarea.value = JSON.stringify([
+      { id: 1, name: "Aarav Patel", role: "Fullstack Architect", active: true },
+      { id: 2, name: "Priya Nair", role: "Security Auditor", active: true },
+      { id: 3, name: "Rohan Verma", role: "Growth Engineer", active: true }
+    ], null, 2);
+  }
+  validateJsonRealtime();
+}
+
+function copyJson() {
+  const textarea = document.getElementById('json-input');
+  if (textarea && textarea.value) {
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      App.showToast('JSON output copied to clipboard!');
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadJsonPreset('api');
+});
+
+  </script>
+</body>
+</html>
